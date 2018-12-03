@@ -3,7 +3,7 @@ use std::str::FromStr;
 use std::fs::File;
 
 fn main() -> std::io::Result<()> {
-    let f = File::open("../input/part01.txt")?;
+    let f = File::open("input/part1.txt")?;
     let reader = BufReader::new(f);
     let frequencies = reader
         .lines()
