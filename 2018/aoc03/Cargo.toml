@@ -4,3 +4,6 @@ version = "0.1.0"
 authors = ["LukeMathWalker <lucapalmieri1993@hotmail.com>"]
 
 [dependencies]
+ndarray = "0.12.1"
+regex = "1"
+lazy_static = "*"
