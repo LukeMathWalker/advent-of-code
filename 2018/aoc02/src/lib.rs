@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
+#[derive(Debug)]
 pub struct BoxId {
-    id: String,
+    pub id: String,
 }
 
 type CharCounter = HashMap<char, usize>;
@@ -20,6 +21,29 @@ impl BoxId {
             *count += 1;
         }
         counter
+    }
+
+    pub fn intersect(&self, other: &Self) -> Vec<char> {
+        let mut common = vec![];
+        for (x, y) in self.id.chars().zip(other.id.chars()) {
+            if x == y {
+                common.push(x);
+            }
+        }
+        common
+    }
+
+    pub fn is_close_to(&self, other: &Self) -> bool {
+        let mut n_mismatches = 0;
+        for (x, y) in self.id.chars().zip(other.id.chars()) {
+            if x != y {
+                n_mismatches += 1;
+                if n_mismatches > 1 {
+                    return false;
+                }
+            }
+        }
+        true
     }
 }
 
