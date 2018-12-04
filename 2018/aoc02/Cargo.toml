@@ -3,4 +3,12 @@ name = "aoc02"
 version = "0.1.0"
 authors = ["LukeMathWalker <lucapalmieri1993@hotmail.com>"]
 
+[lib]
+name = "lib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "bin"
+path = "src/bin.rs"
+
 [dependencies]
