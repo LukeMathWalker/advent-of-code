@@ -1,6 +1,8 @@
 #![feature(try_trait)]
 extern crate lazy_static;
 extern crate regex;
+extern crate ndarray;
+use ndarray::Array;
 use lazy_static::lazy_static;
 use regex::{Captures, Regex};
 use std::fs::File;
@@ -58,6 +60,6 @@ fn part1(input_fp: &str, fabric_side_length: usize) -> std::io::Result<()> {
     let rectangles: Vec<Rectangle> = lines
         .map(|l| Rectangle::from_str(&l, fabric_side_length).unwrap())
         .collect();
-    println!("{:?}", rectangles);
+    let fabric = Array::zeros((&fabric_side_length, &fabric_side_length));
     Ok(())
 }
