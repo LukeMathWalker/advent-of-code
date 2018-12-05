@@ -14,7 +14,8 @@ fn main() -> std::io::Result<()> {
     let side_length = 1000;
     let fabric_claims = read_fabric_claims(input_fp, &side_length)?;
     let fabric_w_claims = part1(fabric_claims.as_slice(), side_length);
-    part2(fabric_claims.as_slice(), &fabric_w_claims);
+    let unchallenged_claim = part2(fabric_claims.as_slice(), &fabric_w_claims).expect("No unchallenged claim was found :(");
+    println!("Found it! Id: {:?}", unchallenged_claim.id);
 
     Ok(())
 }
@@ -80,13 +81,13 @@ fn part1(fabric_claims: &[Claim], fabric_side_length: usize) -> Array2<usize> {
     fabric
 }
 
-fn part2(fabric_claims: &[Claim], fabric_w_claims: &Array2<usize>) {
+fn part2<'a>(fabric_claims: &'a [Claim], fabric_w_claims: &Array2<usize>) -> Option<&'a Claim> {
     for fc in fabric_claims {
         let fabric_patch = fabric_w_claims.slice(s![fc.min_x..fc.max_x, fc.min_y..fc.max_y]);
         let n_spots = fabric_patch.map(|x| {if x > &1 { 1 } else { 0 }}).sum();
         if n_spots == 0 {
-            println!("Found it! Id: {:?}", fc.id);
-            break;
+            return Some(fc)
         }
     }
+    None
 }
