@@ -2,7 +2,7 @@
 extern crate lazy_static;
 extern crate regex;
 extern crate ndarray;
-use ndarray::{Array, s};
+use ndarray::{Array, Array2, s};
 use lazy_static::lazy_static;
 use regex::{Captures, Regex};
 use std::fs::File;
@@ -12,7 +12,9 @@ use std::str::FromStr;
 fn main() -> std::io::Result<()> {
     let input_fp = "input/part1.txt";
     let side_length = 1000;
-    part1(&input_fp, side_length)?;
+    let fabric_claims = read_fabric_claims(input_fp, &side_length)?;
+    let fabric_w_claims = part1(fabric_claims.as_slice(), side_length);
+
     Ok(())
 }
 
@@ -25,7 +27,7 @@ pub struct Rectangle {
 }
 
 impl Rectangle {
-    pub fn from_str(s: &str, fabric_side_length: usize) -> Result<Self, std::option::NoneError> {
+    pub fn from_str(s: &str, fabric_side_length: &usize) -> Result<Self, std::option::NoneError> {
         let caps = Rectangle::parse(s).unwrap();
         let min_x = usize::from_str(caps.get(1)?.as_str()).unwrap();
         let max_y = fabric_side_length - usize::from_str(caps.get(2)?.as_str()).unwrap();
@@ -48,6 +50,14 @@ impl Rectangle {
     }
 }
 
+fn read_fabric_claims(input_fp: &str, fabric_side_length: &usize) -> std::io::Result<Vec<Rectangle>> {
+    let lines = read_input(input_fp)?;
+    let rectangles: Vec<Rectangle> = lines
+        .map(|l| Rectangle::from_str(&l, fabric_side_length).unwrap())
+        .collect();
+    Ok(rectangles)
+}
+
 fn read_input(input_fp: &str) -> std::io::Result<impl Iterator<Item = String>> {
     let f = File::open(input_fp)?;
     let reader = BufReader::new(f);
@@ -55,17 +65,13 @@ fn read_input(input_fp: &str) -> std::io::Result<impl Iterator<Item = String>> {
     Ok(lines)
 }
 
-fn part1(input_fp: &str, fabric_side_length: usize) -> std::io::Result<()> {
-    let lines = read_input(input_fp)?;
-    let rectangles: Vec<Rectangle> = lines
-        .map(|l| Rectangle::from_str(&l, fabric_side_length).unwrap())
-        .collect();
+fn part1(fabric_claims: &[Rectangle], fabric_side_length: usize) -> Array2<usize> {
     let mut fabric = Array::zeros((fabric_side_length.clone(), fabric_side_length.clone()));
-    for r in rectangles {
-        let mut fabric_patch = fabric.slice_mut(s![r.min_x..r.max_x, r.min_y..r.max_y]);
+    for fc in fabric_claims {
+        let mut fabric_patch = fabric.slice_mut(s![fc.min_x..fc.max_x, fc.min_y..fc.max_y]);
         fabric_patch += 1_usize;
     }
     let n_spots = fabric.mapv(|x| {if x > 1 { 1 } else { 0 }}).sum();
     println!("Number of spots claimed at least twice: {:}", n_spots);
-    Ok(())
+    fabric
 }
