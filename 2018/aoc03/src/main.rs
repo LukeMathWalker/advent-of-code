@@ -20,7 +20,7 @@ fn main() -> std::io::Result<()> {
 }
 
 #[derive(Debug)]
-pub struct Rectangle {
+pub struct Claim {
     pub id: usize,
     pub min_x: usize,
     pub max_x: usize,
@@ -28,15 +28,15 @@ pub struct Rectangle {
     pub max_y: usize,
 }
 
-impl Rectangle {
+impl Claim {
     pub fn from_str(s: &str, fabric_side_length: &usize) -> Result<Self, std::option::NoneError> {
-        let caps = Rectangle::parse(s).unwrap();
+        let caps = Claim::parse(s).unwrap();
         let id = usize::from_str(caps.get(1)?.as_str()).unwrap();
         let min_x = usize::from_str(caps.get(2)?.as_str()).unwrap();
         let max_y = fabric_side_length - usize::from_str(caps.get(3)?.as_str()).unwrap();
         let max_x = min_x + usize::from_str(caps.get(4)?.as_str()).unwrap();
         let min_y = max_y - usize::from_str(caps.get(5)?.as_str()).unwrap();
-        Ok(Rectangle {
+        Ok(Claim {
             id,
             min_x,
             max_x,
@@ -54,10 +54,10 @@ impl Rectangle {
     }
 }
 
-fn read_fabric_claims(input_fp: &str, fabric_side_length: &usize) -> std::io::Result<Vec<Rectangle>> {
+fn read_fabric_claims(input_fp: &str, fabric_side_length: &usize) -> std::io::Result<Vec<Claim>> {
     let lines = read_input(input_fp)?;
-    let rectangles: Vec<Rectangle> = lines
-        .map(|l| Rectangle::from_str(&l, fabric_side_length).unwrap())
+    let rectangles: Vec<Claim> = lines
+        .map(|l| Claim::from_str(&l, fabric_side_length).unwrap())
         .collect();
     Ok(rectangles)
 }
@@ -69,7 +69,7 @@ fn read_input(input_fp: &str) -> std::io::Result<impl Iterator<Item = String>> {
     Ok(lines)
 }
 
-fn part1(fabric_claims: &[Rectangle], fabric_side_length: usize) -> Array2<usize> {
+fn part1(fabric_claims: &[Claim], fabric_side_length: usize) -> Array2<usize> {
     let mut fabric = Array::zeros((fabric_side_length.clone(), fabric_side_length.clone()));
     for fc in fabric_claims {
         let mut fabric_patch = fabric.slice_mut(s![fc.min_x..fc.max_x, fc.min_y..fc.max_y]);
@@ -80,7 +80,7 @@ fn part1(fabric_claims: &[Rectangle], fabric_side_length: usize) -> Array2<usize
     fabric
 }
 
-fn part2(fabric_claims: &[Rectangle], fabric_w_claims: &Array2<usize>) {
+fn part2(fabric_claims: &[Claim], fabric_w_claims: &Array2<usize>) {
     for fc in fabric_claims {
         let fabric_patch = fabric_w_claims.slice(s![fc.min_x..fc.max_x, fc.min_y..fc.max_y]);
         let n_spots = fabric_patch.map(|x| {if x > &1 { 1 } else { 0 }}).sum();
