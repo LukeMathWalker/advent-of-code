@@ -2,7 +2,7 @@
 extern crate lazy_static;
 extern crate regex;
 extern crate ndarray;
-use ndarray::Array;
+use ndarray::{Array, s};
 use lazy_static::lazy_static;
 use regex::{Captures, Regex};
 use std::fs::File;
@@ -60,6 +60,18 @@ fn part1(input_fp: &str, fabric_side_length: usize) -> std::io::Result<()> {
     let rectangles: Vec<Rectangle> = lines
         .map(|l| Rectangle::from_str(&l, fabric_side_length).unwrap())
         .collect();
-    let fabric = Array::zeros((&fabric_side_length, &fabric_side_length));
+    let mut fabric = Array::zeros((fabric_side_length.clone(), fabric_side_length.clone()));
+    for r in rectangles {
+        let mut fabric_patch = fabric.slice_mut(s![r.min_x..r.max_x, r.min_y..r.max_y]);
+        fabric_patch += 1_usize;
+    }
+    let mut counter = 0;
+    for spot in fabric.iter() {
+        if spot > &1 {
+            counter += 1;
+        }
+
+    }
+    println!("{:?}", counter);
     Ok(())
 }
