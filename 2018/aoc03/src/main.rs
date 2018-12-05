@@ -21,6 +21,7 @@ fn main() -> std::io::Result<()> {
 
 #[derive(Debug)]
 pub struct Rectangle {
+    pub id: usize,
     pub min_x: usize,
     pub max_x: usize,
     pub min_y: usize,
@@ -30,11 +31,13 @@ pub struct Rectangle {
 impl Rectangle {
     pub fn from_str(s: &str, fabric_side_length: &usize) -> Result<Self, std::option::NoneError> {
         let caps = Rectangle::parse(s).unwrap();
-        let min_x = usize::from_str(caps.get(1)?.as_str()).unwrap();
-        let max_y = fabric_side_length - usize::from_str(caps.get(2)?.as_str()).unwrap();
-        let max_x = min_x + usize::from_str(caps.get(3)?.as_str()).unwrap();
-        let min_y = max_y - usize::from_str(caps.get(4)?.as_str()).unwrap();
+        let id = usize::from_str(caps.get(1)?.as_str()).unwrap();
+        let min_x = usize::from_str(caps.get(2)?.as_str()).unwrap();
+        let max_y = fabric_side_length - usize::from_str(caps.get(3)?.as_str()).unwrap();
+        let max_x = min_x + usize::from_str(caps.get(4)?.as_str()).unwrap();
+        let min_y = max_y - usize::from_str(caps.get(5)?.as_str()).unwrap();
         Ok(Rectangle {
+            id,
             min_x,
             max_x,
             min_y,
@@ -45,7 +48,7 @@ impl Rectangle {
     fn parse(s: &str) -> Option<Captures> {
         lazy_static! {
             static ref RE: Regex =
-                Regex::new(r"#\d{1,4} @ (\d{1,4}),(\d{1,4}): (\d{1,4})x(\d{1,4})").unwrap();
+                Regex::new(r"#(\d{1,4}) @ (\d{1,4}),(\d{1,4}): (\d{1,4})x(\d{1,4})").unwrap();
         }
         RE.captures(s)
     }
@@ -82,7 +85,7 @@ fn part2(fabric_claims: &[Rectangle], fabric_w_claims: &Array2<usize>) {
         let fabric_patch = fabric_w_claims.slice(s![fc.min_x..fc.max_x, fc.min_y..fc.max_y]);
         let n_spots = fabric_patch.map(|x| {if x > &1 { 1 } else { 0 }}).sum();
         if n_spots == 0 {
-            println!("Found it! Id: {:?}", fc);
+            println!("Found it! Id: {:?}", fc.id);
             break;
         }
     }
