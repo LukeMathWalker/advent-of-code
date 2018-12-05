@@ -1,9 +1,9 @@
 #![feature(try_trait)]
 extern crate lazy_static;
-extern crate regex;
 extern crate ndarray;
-use ndarray::{Array, Array2, s};
+extern crate regex;
 use lazy_static::lazy_static;
+use ndarray::{s, Array, Array2};
 use regex::{Captures, Regex};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
@@ -14,7 +14,8 @@ fn main() -> std::io::Result<()> {
     let side_length = 1000;
     let fabric_claims = read_fabric_claims(input_fp, &side_length)?;
     let fabric_w_claims = part1(fabric_claims.as_slice(), side_length);
-    let unchallenged_claim = part2(fabric_claims.as_slice(), &fabric_w_claims).expect("No unchallenged claim was found :(");
+    let unchallenged_claim = part2(fabric_claims.as_slice(), &fabric_w_claims)
+        .expect("No unchallenged claim was found :(");
     println!("Found it! Id: {:?}", unchallenged_claim.id);
 
     Ok(())
@@ -76,7 +77,7 @@ fn part1(fabric_claims: &[Claim], fabric_side_length: usize) -> Array2<usize> {
         let mut fabric_patch = fabric.slice_mut(s![fc.min_x..fc.max_x, fc.min_y..fc.max_y]);
         fabric_patch += 1_usize;
     }
-    let n_spots = fabric.mapv(|x| {if x > 1 { 1 } else { 0 }}).sum();
+    let n_spots = fabric.mapv(|x| if x > 1 { 1 } else { 0 }).sum();
     println!("Number of spots claimed at least twice: {:}", n_spots);
     fabric
 }
@@ -84,9 +85,9 @@ fn part1(fabric_claims: &[Claim], fabric_side_length: usize) -> Array2<usize> {
 fn part2<'a>(fabric_claims: &'a [Claim], fabric_w_claims: &Array2<usize>) -> Option<&'a Claim> {
     for fc in fabric_claims {
         let fabric_patch = fabric_w_claims.slice(s![fc.min_x..fc.max_x, fc.min_y..fc.max_y]);
-        let n_spots = fabric_patch.map(|x| {if x > &1 { 1 } else { 0 }}).sum();
+        let n_spots = fabric_patch.map(|x| if x > &1 { 1 } else { 0 }).sum();
         if n_spots == 0 {
-            return Some(fc)
+            return Some(fc);
         }
     }
     None
