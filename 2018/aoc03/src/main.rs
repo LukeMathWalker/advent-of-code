@@ -65,13 +65,7 @@ fn part1(input_fp: &str, fabric_side_length: usize) -> std::io::Result<()> {
         let mut fabric_patch = fabric.slice_mut(s![r.min_x..r.max_x, r.min_y..r.max_y]);
         fabric_patch += 1_usize;
     }
-    let mut counter = 0;
-    for spot in fabric.iter() {
-        if spot > &1 {
-            counter += 1;
-        }
-
-    }
-    println!("Number of spots claimed at least twice: {:}", counter);
+    let n_spots = fabric.mapv(|x| {if x > 1 { 1 } else { 0 }}).sum();
+    println!("Number of spots claimed at least twice: {:}", n_spots);
     Ok(())
 }
