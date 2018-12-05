@@ -72,6 +72,6 @@ fn part1(input_fp: &str, fabric_side_length: usize) -> std::io::Result<()> {
         }
 
     }
-    println!("{:?}", counter);
+    println!("Number of spots claimed at least twice: {:}", counter);
     Ok(())
 }
