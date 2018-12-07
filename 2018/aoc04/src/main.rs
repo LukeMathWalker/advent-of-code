@@ -2,8 +2,7 @@ use std::fs::File;
 use std::io::{BufReader, BufRead};
 
 fn main() -> std::io::Result<()> {
-    let input_fp = "../input/part01.txt";
-    println!("Hello, world!");
+    let input_fp = "input/part1.txt";
     let input = read_input(input_fp)?;
     Ok(())
 }
