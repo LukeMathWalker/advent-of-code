@@ -2,5 +2,7 @@
 name = "aoc04"
 version = "0.1.0"
 authors = ["LukeMathWalker <lucapalmieri1993@hotmail.com>"]
+edition = "2018"
 
 [dependencies]
+regex = "1"
