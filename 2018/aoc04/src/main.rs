@@ -3,7 +3,7 @@ use std::io::{BufReader, BufRead};
 
 fn main() -> std::io::Result<()> {
     let input_fp = "input/part1.txt";
-    let input = read_input(input_fp)?;
+    let input: Vec<String> = read_input(input_fp)?.collect();
     Ok(())
 }
 
