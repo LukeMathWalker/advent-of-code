@@ -20,6 +20,28 @@ pub struct ShiftEntry {
     pub action: Action,
 }
 
+impl ShiftLog {
+    pub fn sleep(&self) -> usize {
+        let mut minutes = 0;
+        let mut iter = self.records.iter().peekable();
+        loop {
+            match iter.next() {
+                Some(record) => {
+                    if record.action == Action::FallsAsleep {
+                        let wakeup = match iter.peek() {
+                            Some(entry) => entry.minute,
+                            None => 59,
+                        };
+                        minutes += wakeup - record.minute;
+                    }
+                },
+                None => break,
+            }
+        };
+        minutes as usize
+    }
+}
+
 pub use crate::parsing::parse_input;
 mod parsing;
 mod slice_utils;
