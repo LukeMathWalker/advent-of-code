@@ -4,6 +4,14 @@ version = "0.1.0"
 authors = ["LukeMathWalker <lucapalmieri1993@hotmail.com>"]
 edition = "2018"
 
+[lib]
+name = "lib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "bin"
+path = "src/bin.rs"
+
 [dependencies]
 regex = "1"
 lazy_static = "*"
