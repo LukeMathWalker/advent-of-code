@@ -20,7 +20,6 @@ pub struct ShiftEntry {
     pub action: Action,
 }
 
-pub use crate::input::{parse_line, RawActionEntry};
-pub use crate::slice_utils::LeftInclusiveSplit;
-mod input;
+pub use crate::parsing::parse_input;
+mod parsing;
 mod slice_utils;
