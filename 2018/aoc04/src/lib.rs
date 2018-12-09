@@ -1,31 +1,4 @@
-pub trait LeftInclusiveSplit {
-    type Item;
-    fn li_split<F>(&self, predicate: F) -> Vec<Vec<Self::Item>>
-    where
-        F: FnMut(&Self::Item) -> bool;
-}
-
-impl<T: Clone> LeftInclusiveSplit for [T] {
-    type Item = T;
-
-    fn li_split<F>(&self, mut predicate: F) -> Vec<Vec<Self::Item>>
-    where
-        F: FnMut(&Self::Item) -> bool,
-    {
-        let mut splits = vec![];
-        for x in self {
-            if (predicate)(x) {
-                splits.push(vec![x.clone()]);
-            } else {
-                match splits.last_mut() {
-                    Some(s) => s.push(x.clone()),
-                    None => splits.push(vec![x.clone()]),
-                }
-            }
-        }
-        splits
-    }
-}
+use chrono::NaiveDate;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum Action {
@@ -34,5 +7,20 @@ pub enum Action {
     WakesUp,
 }
 
+#[derive(Debug, Clone)]
+pub struct ShiftLog {
+    pub guard_id: usize,
+    pub date: NaiveDate,
+    pub records: Vec<ShiftEntry>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ShiftEntry {
+    pub minute: u32,
+    pub action: Action,
+}
+
 pub use crate::input::{parse_line, RawActionEntry};
+pub use crate::slice_utils::LeftInclusiveSplit;
 mod input;
+mod slice_utils;
