@@ -1,20 +1,39 @@
-use lib::{parse_input, ShiftLog};
+use lib::{parse_input, EmployeeSleepLog, ShiftLog};
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::collections::HashMap;
 
 fn main() -> std::io::Result<()> {
     let input_fp = "input/part1.txt";
     let input: Vec<String> = read_input(input_fp)?.collect();
     let shift_registry: Vec<ShiftLog> = parse_input(input);
 
-    let mut sleep_registry = HashMap::new();
+    let mut shifts_by_employee = HashMap::new();
     for shift in shift_registry.iter() {
-        let time_asleep = sleep_registry.entry(shift.guard_id).or_insert(0);
-        *time_asleep += shift.sleep();
+        let shifts = shifts_by_employee.entry(shift.guard_id).or_insert(vec![]);
+        shifts.push(shift);
     }
 
-    println!("{:?}", sleep_registry);
+    let mut sleep_registry = HashMap::new();
+    for (guard_id, shifts) in shifts_by_employee.iter() {
+        let sleep_log = EmployeeSleepLog::new(shifts.as_slice());
+        sleep_registry.insert(guard_id, sleep_log);
+    }
+
+    let (sleepiest_guard_id, sleepiest_guard_log) = sleep_registry
+        .iter()
+        .max_by_key(|t| t.1.sleep_time())
+        .unwrap();
+    let sleepiest_minute = sleepiest_guard_log.sleepiest_minute();
+
+    println!(
+        "Sleepiest guard id: {:?}. Sleepiest minute: {:?}",
+        sleepiest_guard_id, sleepiest_minute
+    );
+    println!(
+        "Part 1 solution: {:?}",
+        *sleepiest_guard_id * sleepiest_minute
+    );
     Ok(())
 }
 

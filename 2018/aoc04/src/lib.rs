@@ -13,17 +13,29 @@ pub struct EmployeeSleepLog {
 }
 
 impl EmployeeSleepLog {
-    pub fn new(shift_logs: &[ShiftLog]) -> Self {
-        let guard_id = shift_logs.first().expect("At least one log must be passed.").guard_id;
+    pub fn new(shift_logs: &[&ShiftLog]) -> Self {
+        let guard_id = shift_logs
+            .first()
+            .expect("At least one log must be passed.")
+            .guard_id;
         let mut sleep = [0; 60];
         for shift_log in shift_logs {
+            assert_eq!(guard_id, shift_log.guard_id);
             for (min, state) in shift_log.sleep.iter().enumerate() {
                 if *state {
                     sleep[min] += 1;
                 }
             }
-        };
+        }
         EmployeeSleepLog { guard_id, sleep }
+    }
+
+    pub fn sleep_time(&self) -> usize {
+        self.sleep.iter().sum()
+    }
+
+    pub fn sleepiest_minute(&self) -> usize {
+        self.sleep.iter().max().unwrap().clone()
     }
 }
 
@@ -49,7 +61,7 @@ impl ShiftLog {
         }
     }
 
-    fn sleep_from_action_records(action_records: Vec<ShiftEntry>) -> [bool; 60]{
+    fn sleep_from_action_records(action_records: Vec<ShiftEntry>) -> [bool; 60] {
         let mut sleep_records = [false; 60];
         for i in 0..action_records.len() {
             let current_action_min = action_records[i].minute as usize;
@@ -57,7 +69,7 @@ impl ShiftLog {
             let next_action_min = if i == action_records.len() - 1 {
                 60
             } else {
-                action_records[i+1].minute as usize
+                action_records[i + 1].minute as usize
             };
             for min in current_action_min..next_action_min {
                 sleep_records[min] = current_state;

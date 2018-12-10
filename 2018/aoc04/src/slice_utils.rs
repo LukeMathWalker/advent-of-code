@@ -1,16 +1,16 @@
 pub trait LeftInclusiveSplit {
     type Item;
     fn li_split<F>(&self, predicate: F) -> Vec<Vec<Self::Item>>
-        where
-            F: FnMut(&Self::Item) -> bool;
+    where
+        F: FnMut(&Self::Item) -> bool;
 }
 
 impl<T: Clone> LeftInclusiveSplit for [T] {
     type Item = T;
 
     fn li_split<F>(&self, mut predicate: F) -> Vec<Vec<Self::Item>>
-        where
-            F: FnMut(&Self::Item) -> bool,
+    where
+        F: FnMut(&Self::Item) -> bool,
     {
         let mut splits = vec![];
         for x in self {
@@ -26,4 +26,3 @@ impl<T: Clone> LeftInclusiveSplit for [T] {
         splits
     }
 }
-

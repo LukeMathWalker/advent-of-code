@@ -1,4 +1,4 @@
-use super::{Action, ShiftLog, ShiftEntry};
+use super::{Action, ShiftEntry, ShiftLog};
 use crate::slice_utils::LeftInclusiveSplit;
 use chrono::{NaiveDateTime, NaiveTime, Timelike};
 use lazy_static::lazy_static;
@@ -37,11 +37,7 @@ fn to_shift_log(entries: RawShiftEntry) -> ShiftLog {
             minute: e.0.clone().time().minute(),
         })
         .collect();
-    ShiftLog::new(
-        guard_id,
-        date,
-        records,
-    )
+    ShiftLog::new(guard_id, date, records)
 }
 
 fn parse_line(s: &str) -> RawActionEntry {
