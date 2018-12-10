@@ -1,4 +1,4 @@
-use lib::{parse_input, EmployeeSleepLog, ShiftLog};
+use lib::{parse_input, GuardSleepLog, ShiftLog};
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
@@ -16,7 +16,7 @@ fn main() -> std::io::Result<()> {
 
     let mut sleep_registry = HashMap::new();
     for (guard_id, shifts) in shifts_by_employee.iter() {
-        let sleep_log = EmployeeSleepLog::new(shifts.as_slice());
+        let sleep_log = GuardSleepLog::new(shifts.as_slice());
         sleep_registry.insert(guard_id, sleep_log);
     }
 

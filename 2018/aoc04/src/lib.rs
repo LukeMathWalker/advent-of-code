@@ -13,12 +13,12 @@ pub enum State {
     Awake,
 }
 
-pub struct EmployeeSleepLog {
+pub struct GuardSleepLog {
     pub guard_id: usize,
     pub sleep: [usize; 60],
 }
 
-impl EmployeeSleepLog {
+impl GuardSleepLog {
     pub fn new(shift_logs: &[&ShiftLog]) -> Self {
         let guard_id = shift_logs
             .first()
@@ -33,7 +33,7 @@ impl EmployeeSleepLog {
                 }
             }
         }
-        EmployeeSleepLog { guard_id, sleep }
+        GuardSleepLog { guard_id, sleep }
     }
 
     pub fn sleep_time(&self) -> usize {
