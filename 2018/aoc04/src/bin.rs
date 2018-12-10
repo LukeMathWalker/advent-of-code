@@ -7,11 +7,13 @@ fn main() -> std::io::Result<()> {
     let input_fp = "input/part1.txt";
     let input: Vec<String> = read_input(input_fp)?.collect();
     let shift_registry: Vec<ShiftLog> = parse_input(input);
+
     let mut sleep_registry = HashMap::new();
     for shift in shift_registry.iter() {
         let time_asleep = sleep_registry.entry(shift.guard_id).or_insert(0);
         *time_asleep += shift.sleep();
     }
+
     println!("{:?}", sleep_registry);
     Ok(())
 }
