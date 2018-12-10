@@ -7,6 +7,26 @@ pub enum Action {
     WakesUp,
 }
 
+pub struct EmployeeSleepLog {
+    pub guard_id: usize,
+    pub sleep: [usize; 60],
+}
+
+impl EmployeeSleepLog {
+    pub fn new(shift_logs: &[ShiftLog]) -> Self {
+        let guard_id = shift_logs.first().expect("At least one log must be passed.").guard_id;
+        let mut sleep = [0; 60];
+        for shift_log in shift_logs {
+            for (min, state) in shift_log.sleep.iter().enumerate() {
+                if *state {
+                    sleep[min] += 1;
+                }
+            }
+        };
+        EmployeeSleepLog { guard_id, sleep }
+    }
+}
+
 #[derive(Clone)]
 pub struct ShiftLog {
     pub guard_id: usize,
