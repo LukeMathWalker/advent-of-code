@@ -7,6 +7,12 @@ pub enum Action {
     WakesUp,
 }
 
+#[derive(Clone, Debug, Eq, PartialEq, Copy)]
+pub enum State {
+    Asleep,
+    Awake,
+}
+
 pub struct EmployeeSleepLog {
     pub guard_id: usize,
     pub sleep: [usize; 60],
@@ -22,7 +28,7 @@ impl EmployeeSleepLog {
         for shift_log in shift_logs {
             assert_eq!(guard_id, shift_log.guard_id);
             for (min, state) in shift_log.sleep.iter().enumerate() {
-                if *state {
+                if *state == State::Asleep {
                     sleep[min] += 1;
                 }
             }
@@ -51,7 +57,7 @@ impl EmployeeSleepLog {
 pub struct ShiftLog {
     pub guard_id: usize,
     pub date: NaiveDate,
-    pub sleep: [bool; 60],
+    pub sleep: [State; 60],
 }
 
 #[derive(Debug, Clone)]
@@ -69,11 +75,15 @@ impl ShiftLog {
         }
     }
 
-    fn sleep_from_action_records(action_records: Vec<ShiftEntry>) -> [bool; 60] {
-        let mut sleep_records = [false; 60];
+    fn sleep_from_action_records(action_records: Vec<ShiftEntry>) -> [State; 60] {
+        let mut sleep_records = [State::Awake; 60];
         for i in 0..action_records.len() {
             let current_action_min = action_records[i].minute as usize;
-            let current_state = action_records[i].action == Action::FallsAsleep;
+            let current_state = if action_records[i].action == Action::FallsAsleep {
+                State::Asleep
+            } else {
+                State::Awake
+            };
             let next_action_min = if i == action_records.len() - 1 {
                 60
             } else {
@@ -87,7 +97,7 @@ impl ShiftLog {
     }
 
     pub fn sleep(&self) -> usize {
-        self.sleep.iter().map(|s| if *s { 1 } else { 0 }).sum()
+        self.sleep.iter().map(|s| if *s == State::Asleep { 1 } else { 0 }).sum()
     }
 }
 
