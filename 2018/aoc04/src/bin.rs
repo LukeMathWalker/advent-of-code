@@ -24,7 +24,7 @@ fn main() -> std::io::Result<()> {
         .iter()
         .max_by_key(|t| t.1.sleep_time())
         .unwrap();
-    let sleepiest_minute = sleepiest_guard_log.sleepiest_minute();
+    let sleepiest_minute = sleepiest_guard_log.sleepiest_minute().0;
 
     println!(
         "Sleepiest guard id: {:?}. Sleepiest minute: {:?}",
@@ -33,6 +33,16 @@ fn main() -> std::io::Result<()> {
     println!(
         "Part 1 solution: {:?}",
         *sleepiest_guard_id * sleepiest_minute
+    );
+
+    let (sleepiest_guard_id, sleepiest_guard_log) = sleep_registry
+        .iter()
+        .max_by_key(|t| t.1.sleepiest_minute().1)
+        .unwrap();
+    let sleepiest_minute = sleepiest_guard_log.sleepiest_minute().0;
+    println!(
+        "Part 2 solution: {:?}",
+        *sleepiest_guard_id *sleepiest_minute
     );
     Ok(())
 }

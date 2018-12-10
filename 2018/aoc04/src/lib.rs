@@ -34,8 +34,16 @@ impl EmployeeSleepLog {
         self.sleep.iter().sum()
     }
 
-    pub fn sleepiest_minute(&self) -> usize {
-        self.sleep.iter().max().unwrap().clone()
+    pub fn sleepiest_minute(&self) -> (usize, usize) {
+        let mut max_index = 0;
+        let mut max_value = self.sleep[0];
+        for (i, value) in self.sleep.iter().enumerate() {
+            if value > &max_value {
+                max_index = i;
+                max_value = *value;
+            }
+        }
+        (max_index, max_value)
     }
 }
 
