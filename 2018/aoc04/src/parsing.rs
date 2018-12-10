@@ -37,11 +37,11 @@ fn to_shift_log(entries: RawShiftEntry) -> ShiftLog {
             minute: e.0.clone().time().minute(),
         })
         .collect();
-    ShiftLog {
+    ShiftLog::new(
         guard_id,
         date,
         records,
-    }
+    )
 }
 
 fn parse_line(s: &str) -> RawActionEntry {

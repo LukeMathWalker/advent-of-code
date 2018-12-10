@@ -7,11 +7,11 @@ pub enum Action {
     WakesUp,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct ShiftLog {
     pub guard_id: usize,
     pub date: NaiveDate,
-    pub records: Vec<ShiftEntry>,
+    pub sleep: [bool; 60],
 }
 
 #[derive(Debug, Clone)]
@@ -21,24 +21,33 @@ pub struct ShiftEntry {
 }
 
 impl ShiftLog {
-    pub fn sleep(&self) -> usize {
-        let mut minutes = 0;
-        let mut iter = self.records.iter().peekable();
-        loop {
-            match iter.next() {
-                Some(record) => {
-                    if record.action == Action::FallsAsleep {
-                        let wakeup = match iter.peek() {
-                            Some(entry) => entry.minute,
-                            None => 59,
-                        };
-                        minutes += wakeup - record.minute;
-                    }
-                },
-                None => break,
+    pub fn new(guard_id: usize, date: NaiveDate, records: Vec<ShiftEntry>) -> Self {
+        ShiftLog {
+            guard_id,
+            date,
+            sleep: ShiftLog::sleep_from_action_records(records),
+        }
+    }
+
+    fn sleep_from_action_records(action_records: Vec<ShiftEntry>) -> [bool; 60]{
+        let mut sleep_records = [false; 60];
+        for i in 0..action_records.len() {
+            let current_action_min = action_records[i].minute as usize;
+            let current_state = action_records[i].action == Action::FallsAsleep;
+            let next_action_min = if i == action_records.len() - 1 {
+                60
+            } else {
+                action_records[i+1].minute as usize
+            };
+            for min in current_action_min..next_action_min {
+                sleep_records[min] = current_state;
             }
-        };
-        minutes as usize
+        }
+        sleep_records
+    }
+
+    pub fn sleep(&self) -> usize {
+        self.sleep.iter().map(|s| if *s { 1 } else { 0 }).sum()
     }
 }
 
